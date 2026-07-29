@@ -1,0 +1,152 @@
+/* ===== 全局重置 ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+    background: #fef9e7;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.login-container {
+    background: #fffaf0;
+    border-radius: 32px;
+    box-shadow: 0 20px 40px rgba(200, 170, 120, 0.25),
+    0 6px 12px rgba(0,0,0,0.05);
+    padding: 40px 35px;
+    max-width: 420px;
+    width: 100%;
+    border: 1px solid #f5e5c8;
+    transition: transform 0.2s;
+}
+
+.login-container:hover {
+    transform: translateY(-4px);
+}
+
+/* ===== 头部 ===== */
+.login-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+.login-header .login-logo {
+    width: 80px;
+    display: block;
+    margin: 0 auto 12px;
+}
+.login-header h2 {
+    color: #b48b5a;
+    font-weight: 300;
+    font-size: 26px;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+}
+.login-header p {
+    color: #a88462;
+    font-size: 15px;
+    opacity: 0.8;
+}
+
+/* ===== 表单 ===== */
+.form-floating {
+    margin-bottom: 16px;
+}
+.form-floating .form-control {
+    border-radius: 20px;
+    border: 1px solid #eddcc8;
+    background: #fffcf5;
+    font-size: 16px;
+    color: #4a3520;
+    height: 58px;
+    padding: 0 16px;
+    outline: none;
+    transition: 0.2s;
+}
+.form-floating .form-control:focus {
+    border-color: #c29a6b;
+    box-shadow: 0 0 0 3px rgba(194, 154, 107, 0.2);
+}
+.form-floating label {
+    color: #a88462;
+    padding-left: 12px;
+    font-weight: 500;
+}
+
+/* ===== 错误信息 ===== */
+.error-message {
+    color: #d9534f;
+    font-size: 14px;
+    margin: 6px 0 12px;
+    display: none;
+    text-align: center;
+}
+
+/* ===== 登录按钮 ===== */
+.btn-login {
+    background: #dbb48b;
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 40px;
+    font-size: 18px;
+    width: 100%;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.btn-login:hover {
+    background: #c29a6b;
+    transform: scale(1.02);
+}
+.btn-login i {
+    margin-right: 6px;
+}
+
+/* ===== 注册按钮 ===== */
+.btn-register {
+    background: #d4b8a8;
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 40px;
+    font-size: 18px;
+    width: 100%;
+    transition: 0.3s;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+.btn-register.active {
+    background: #c29a6b;
+    cursor: pointer;
+    opacity: 1;
+}
+.btn-register.active:hover {
+    background: #a88462;
+    transform: scale(1.02);
+}
+.btn-register i {
+    margin-right: 6px;
+}
+
+/* ===== 切换链接 ===== */
+.toggle-link {
+    color: #b48b5a;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 15px;
+    transition: 0.2s;
+}
+.toggle-link:hover {
+    color: #8a6d4b;
+}
+
+/* ===== 卡片切换动画（可选） ===== */
+#loginCard, #registerCard {
+    transition: opacity 0.3s ease;
+}

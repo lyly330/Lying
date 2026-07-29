@@ -1,0 +1,481 @@
+/* person.css - 扩展 */
+
+/* 整体容器 */
+.person-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #fef9e7;
+    padding: 20px;
+}
+
+.person-container {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 30px;
+    max-width: 1000px;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+/* 单卡片模式：居中 */
+.person-container.single {
+    justify-content: center;
+}
+.person-container.single .edit-card {
+    display: none !important;
+}
+
+/* 双卡片模式 */
+.person-container.dual {
+    justify-content: center;
+}
+.person-container.dual .info-card {
+    flex: 1;
+    max-width: 45%;
+}
+.person-container.dual .edit-card {
+    flex: 1;
+    max-width: 45%;
+    display: block !important;
+}
+
+/* 原卡片样式（与之前保持一致，但调整边距） */
+.card {
+    background: #fffaf0;
+    border-radius: 32px;
+    box-shadow: 0 20px 40px rgba(200, 170, 120, 0.25), 0 6px 12px rgba(0,0,0,0.05);
+    padding: 40px 30px;
+    border: 1px solid #f5e5c8;
+    position: relative;  /* 为图标定位 */
+    transition: all 0.3s ease;
+}
+
+.info-card {
+    /* 保留原样式 */
+}
+
+/* 右上角编辑图标 */
+.edit-icon {
+    position: absolute;
+    top: 18px;
+    right: 20px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: 0.2s;
+    z-index: 5;
+}
+.edit-icon:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* 编辑卡片样式 */
+.edit-card {
+    background: #f3f0f0;  /* 淡灰蓝底 */
+    border-color: #b8c9d6;
+    box-shadow: 0 20px 40px rgba(160, 180, 200, 0.2);
+}
+.edit-card h2 {
+    color: #5a7a8a;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* 表单样式（已有一部分，补充） */
+.info-form {
+    text-align: left;
+}
+.info-form label {
+    display: block;
+    font-weight: 500;
+    color: #3d5a6c;
+    margin-top: 12px;
+}
+.info-form input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #cbd8e0;
+    border-radius: 20px;
+    background: #ffffff;
+    font-size: 16px;
+    color: #2c3e50;
+    outline: none;
+    transition: 0.2s;
+}
+.info-form input:focus {
+    border-color: #7fa3b8;
+    box-shadow: 0 0 0 3px rgba(127, 163, 184, 0.2);
+}
+
+.edit-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 25px;
+    justify-content: center;
+}
+.btn-save {
+    background: #7fa3b8;
+    border: none;
+    color: white;
+    padding: 10px 28px;
+    border-radius: 40px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.btn-save:hover {
+    background: #5f8aa0;
+    transform: scale(1.02);
+}
+.btn-cancel {
+    background: #d4b8a8;
+    border: none;
+    color: white;
+    padding: 10px 28px;
+    border-radius: 40px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.btn-cancel:hover {
+    background: #bfa08e;
+    transform: scale(1.02);
+}
+/* 头像样式 */
+.avatar-container {
+    text-align: center;
+    margin-bottom: 10px;
+}
+.avatar-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #eddcc8;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.avatar-img:hover {
+    transform: scale(1.05);
+    border-color: #c29a6b;
+}
+
+/* 头像选择器弹窗 */
+.avatar-picker-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    backdrop-filter: blur(2px);
+}
+.avatar-picker-card {
+    background: #fffaf0;
+    border-radius: 32px;
+    padding: 30px 40px;
+    max-width: 420px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    text-align: center;
+}
+.avatar-picker-card h3 {
+    color: #b48b5a;
+    margin-bottom: 20px;
+}
+.avatar-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin: 20px 0;
+}
+.avatar-options img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #eddcc8;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.avatar-options img:hover {
+    transform: scale(1.08);
+    border-color: #c29a6b;
+}
+.avatar-picker-card .btn-cancel {
+    background: #d4b8a8;
+    border: none;
+    color: white;
+    padding: 8px 30px;
+    border-radius: 40px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.avatar-picker-card .btn-cancel:hover {
+    background: #bfa08e;
+}
+/* ===== 双栏布局 ===== */
+.person-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #fef9e7;
+    padding: 20px;
+}
+.cards-wrapper {
+    display: flex;
+    gap: 30px;
+    max-width: 1100px;
+    width: 100%;
+}
+.card {
+    flex: 1;
+    background: #fffaf0;
+    border-radius: 32px;
+    box-shadow: 0 20px 40px rgba(200, 170, 120, 0.25), 0 6px 12px rgba(0,0,0,0.05);
+    padding: 35px 28px;
+    border: 1px solid #f5e5c8;
+    position: relative;
+    transition: transform 0.2s;
+}
+.card:hover {
+    transform: translateY(-4px);
+}
+/* 宠物卡片边框色微调 */
+.pet-card {
+    border-color: #d4e0d8;
+    background: #f7faf5;
+}
+
+/* ===== 头像容器 ===== */
+.avatar-container {
+    text-align: center;
+    margin-bottom: 12px;
+}
+.avatar-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #eddcc8;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.avatar-img:hover {
+    transform: scale(1.05);
+    border-color: #c29a6b;
+}
+
+/* ===== 编辑图标 ===== */
+.edit-icon {
+    position: absolute;
+    top: 18px;
+    right: 20px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: 0.2s;
+    z-index: 5;
+}
+.edit-icon:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* ===== 个人/宠物信息展示 ===== */
+.info p {
+    font-size: 18px;
+    color: #6b4f32;
+    margin: 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.info span.label {
+    font-weight: 500;
+    color: #a88462;
+    min-width: 60px;
+}
+
+/* ===== 编辑表单（统一样式） ===== */
+#infoEditForm input, #petEditForm input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #eddcc8;
+    border-radius: 20px;
+    background: #fffcf5;
+    font-size: 16px;
+    color: #4a3520;
+    margin: 6px 0;
+    outline: none;
+}
+#infoEditForm input:focus, #petEditForm input:focus {
+    border-color: #c29a6b;
+    box-shadow: 0 0 0 3px rgba(194, 154, 107, 0.2);
+}
+#infoEditForm button, #petEditForm button {
+    background: #dbb48b;
+    border: none;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 40px;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 6px 6px 0 0;
+    transition: 0.2s;
+}
+#infoEditForm button:hover, #petEditForm button:hover {
+    background: #c29a6b;
+}
+
+/* ===== 体力进度条 ===== */
+.energy-bar-container {
+    margin-top: 18px;
+    text-align: left;
+}
+.energy-bar-container label {
+    font-weight: 500;
+    color: #6b4f32;
+    display: block;
+    margin-bottom: 4px;
+}
+.energy-bar-bg {
+    background: #e8dccc;
+    border-radius: 20px;
+    height: 12px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+.energy-bar-fill {
+    background: #c29a6b;
+    height: 100%;
+    border-radius: 20px;
+    transition: width 0.5s ease;
+}
+#energyText {
+    display: inline-block;
+    font-size: 14px;
+    color: #6b4f32;
+    margin-top: 4px;
+}
+
+/* ===== 头像选择器弹窗 ===== */
+.avatar-picker-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    backdrop-filter: blur(2px);
+}
+.avatar-picker-card {
+    background: #fffaf0;
+    border-radius: 32px;
+    padding: 30px 40px;
+    max-width: 420px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    text-align: center;
+}
+.avatar-picker-card h3 {
+    color: #b48b5a;
+    margin-bottom: 20px;
+}
+.avatar-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin: 20px 0;
+}
+.avatar-options img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #eddcc8;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.avatar-options img:hover {
+    transform: scale(1.08);
+    border-color: #c29a6b;
+}
+.avatar-picker-card .btn-cancel {
+    background: #d4b8a8;
+    border: none;
+    color: white;
+    padding: 8px 30px;
+    border-radius: 40px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.avatar-picker-card .btn-cancel:hover {
+    background: #bfa08e;
+}
+/* ===== 可爱的返回键（卡片左上角） ===== */
+.back-btn {
+    position: absolute;
+    top: 18px;
+    left: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #b48b5a;
+    text-decoration: none;
+    background: rgba(255, 250, 240, 0.7);
+    padding: 4px 12px 4px 8px;
+    border-radius: 30px;
+    border: 1px solid #f5e5c8;
+    backdrop-filter: blur(4px);
+    transition: all 0.25s ease;
+    z-index: 10;
+    box-shadow: 0 2px 6px rgba(200, 170, 120, 0.12);
+}
+
+.back-btn i {
+    font-size: 20px;
+    color: #dbb48b;
+    transition: transform 0.3s ease;
+}
+
+.back-btn:hover {
+    background: #fdf3e3;
+    border-color: #dbb48b;
+    transform: translateY(-1px) scale(1.02);
+    box-shadow: 0 4px 12px rgba(200, 170, 120, 0.2);
+}
+
+.back-btn:hover i {
+    transform: translateX(-3px) scale(1.05);
+}
+
+.back-btn:active {
+    transform: scale(0.94);
+}
+
+/* 确保编辑图标不会和返回键重叠，微调位置 */
+.edit-icon {
+    right: 20px;
+    top: 18px;
+}

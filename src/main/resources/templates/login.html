@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">登录 - 暖心智能助手</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/font/bootstrap-icons.css}" rel="stylesheet">
+    <link th:href="@{/css/login.css}" rel="stylesheet">
+</head>
+<body>
+<div class="login-container">
+    <!-- ====== 登录卡片 ====== -->
+    <div id="loginCard">
+        <div class="login-header">
+            <img th:src="@{/images/logo2.png}" alt="小猫 Logo" class="login-logo">
+            <h2 th:text="${title}">欢迎回来呀</h2>
+            <p th:text="${smallTitle}">今天也一起轻松解决问题吧</p>
+        </div>
+        <form id="loginForm" onsubmit="return handleLogin(event)">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="username" placeholder="用户名" required value="">
+                <label for="username">用户名</label>
+            </div>
+            <div class="form-floating">
+                <input type="password" class="form-control" id="password" placeholder="密码" required value="">
+                <label for="password">密码</label>
+            </div>
+            <div class="error-message" id="errorMessage"></div>
+            <button type="submit" class="btn btn-login">
+                <i class="bi bi-box-arrow-in-right"></i> 登录
+            </button>
+        </form>
+        <p class="mt-3 text-center">
+            <span class="toggle-link" onclick="showRegister()">去注册</span>
+        </p>
+    </div>
+
+    <!-- ====== 注册卡片（默认隐藏） ====== -->
+    <div id="registerCard" style="display:none;">
+        <div class="login-header">
+            <h2>注册新账号</h2>
+            <p>填写信息，加入我们吧</p>
+        </div>
+        <form id="registerForm">
+            <div class="form-floating">
+                <input type="text" class="form-control" id="regUsername" placeholder="用户名" required>
+                <label for="regUsername">用户名</label>
+            </div>
+            <div class="form-floating">
+                <input type="password" class="form-control" id="regPassword" placeholder="密码" required>
+                <label for="regPassword">密码</label>
+            </div>
+            <div class="form-floating">
+                <input type="email" class="form-control" id="regEmail" placeholder="邮箱">
+                <label for="regEmail">邮箱</label>
+            </div>
+            <div class="form-floating">
+                <input type="tel" class="form-control" id="regTel" placeholder="电话">
+                <label for="regTel">电话</label>
+            </div>
+            <div class="error-message" id="regError"></div>
+            <button type="button" class="btn btn-register" id="registerBtn" disabled>
+                <i class="bi bi-person-plus"></i> 注册
+            </button>
+        </form>
+        <p class="mt-3 text-center">
+            <span class="toggle-link" onclick="showLogin()">返回登录</span>
+        </p>
+    </div>
+</div>
+
+<script th:src="@{/js/login.js}"></script>
+<script>
+    // ========== 页面切换 ==========
+    function showRegister() {
+        document.getElementById('loginCard').style.display = 'none';
+        document.getElementById('registerCard').style.display = 'block';
+        document.getElementById('registerForm').reset();
+        document.getElementById('regError').style.display = 'none';
+        updateRegisterBtn();
+    }
+
+    function showLogin() {
+        document.getElementById('registerCard').style.display = 'none';
+        document.getElementById('loginCard').style.display = 'block';
+        document.getElementById('errorMessage').style.display = 'none';
+    }
+
+    // ========== 注册按钮状态控制 ==========
+    const regInputs = document.querySelectorAll('#registerForm input');
+    regInputs.forEach(input => {
+        input.addEventListener('input', updateRegisterBtn);
+    });
+
+    function updateRegisterBtn() {
+        const username = document.getElementById('regUsername').value.trim();
+        const password = document.getElementById('regPassword').value.trim();
+        const btn = document.getElementById('registerBtn');
+        // 用户名和密码必填，邮箱和电话可选
+        if (username && password) {
+            btn.disabled = false;
+            btn.classList.add('active');
+        } else {
+            btn.disabled = true;
+            btn.classList.remove('active');
+        }
+    }
+
+    // ========== 注册提交 ==========
+    document.getElementById('registerBtn').addEventListener('click', function() {
+        const username = document.getElementById('regUsername').value.trim();
+        const password = document.getElementById('regPassword').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const tel = document.getElementById('regTel').value.trim();
+        const errorEl = document.getElementById('regError');
+
+        if (!username || !password) {
+            errorEl.textContent = '用户名和密码不能为空';
+            errorEl.style.display = 'block';
+            return;
+        }
+
+        fetch('/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password, email, tel })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('注册成功！请登录。');
+                    // 预填用户名到登录表单
+                    document.getElementById('username').value = username;
+                    document.getElementById('password').value = '';
+                    showLogin();
+                } else {
+                    errorEl.textContent = data.message || '注册失败';
+                    errorEl.style.display = 'block';
+                }
+            })
+            .catch(() => {
+                errorEl.textContent = '网络异常，请稍后重试';
+                errorEl.style.display = 'block';
+            });
+    });
+</script>
+</body>
+</html>

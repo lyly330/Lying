@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">暖心智能助手</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/font/bootstrap-icons.css}" rel="stylesheet">
+    <link th:href="@{/css/common/layout.css}" rel="stylesheet">
+</head>
+<body>
+<nav class="sidebar">
+    <div class="sidebar-logo">
+        <img th:src="@{/images/logo.png}" alt="小狗 Logo">
+    </div>
+    <div class="sidebar-sticky">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/chat}" th:classappend="${currentPath == '/chat'} ? 'active'">
+                    <i class="bi bi-chat-dots"></i> 暖心聊天
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/document}" th:classappend="${currentPath == '/document'} ? 'active'">
+                    <i class="bi bi-book"></i> 知识小屋
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/person}" th:classappend="${currentPath == '/person'} ? 'active'">
+                    <i class="bi bi-badge-ad"></i> 个人中心
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<header class="header">
+    <h1 th:text="${pageTitle}">暖心智能助手</h1>
+    <a href="#" class="logout-btn" onclick="logout()">
+        <i class="bi bi-box-arrow-right"></i> 退出登录
+    </a>
+</header>
+
+<main class="main-content">
+    <div th:replace="${content}"></div>
+</main>
+
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/common/layout.js}"></script>
+</body>
+</html>

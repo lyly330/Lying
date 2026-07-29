@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>个人中心</title>
+  <link rel="stylesheet" th:href="@{/css/person/person.css}">
+</head>
+<body>
+<div class="person-wrapper">
+    <!-- 可爱的返回键 -->
+    <div class="back-btn-wrapper">
+      <a href="/chat" class="back-btn">
+        <i class="bi bi-arrow-left-circle-fill"></i> 返回聊天
+      </a>
+    </div>
+    <div class="cards-wrapper">
+      <!-- 左卡片和右卡片保持不变 -->
+    <!-- ====== 左卡片：个人信息 ====== -->
+    <div class="card info-card" id="infoCard">
+
+      <!-- 右上角编辑图标（点击切换编辑模式） -->
+      <img th:src="@{/images/change.png}" class="edit-icon" id="editIcon">
+      <!-- 头像 -->
+      <div class="avatar-container">
+        <img id="avatarImg" src="/images/noerool.png" class="avatar-img" onclick="showAvatarPicker(event)">
+      </div>
+      <h1>个人中心</h1>
+      <div class="info" id="infoDisplay">
+        <p><span class="label">👤 姓名</span> <span id="displayUsername" th:text="${user.username}">admin</span></p>
+        <p><span class="label">📧 邮箱</span> <span id="displayEmail" th:text="${user.email}">-</span></p>
+        <p><span class="label">📞 电话</span> <span id="displayTel" th:text="${user.tel}">-</span></p>
+      </div>
+      <!-- 个人信息编辑表单（默认隐藏） -->
+      <div id="infoEditForm" style="display:none;">
+        <input type="text" id="editInfoUsername" placeholder="用户名" th:value="${user.username}">
+        <input type="password" id="editInfoPassword" placeholder="新密码（留空不修改）">
+        <input type="email" id="editInfoEmail" placeholder="邮箱" th:value="${user.email}">
+        <input type="tel" id="editInfoTel" placeholder="电话" th:value="${user.tel}">
+        <button onclick="saveInfo()">保存</button>
+        <button onclick="cancelInfoEdit()">取消</button>
+      </div>
+      <div class="greeting" th:text="'欢迎回来，' + ${user.username} + ' ☀️'"></div>
+      <div class="footer">
+        <span class="dot"></span> 今日阳光正好 <span class="dot"></span>
+        <br>
+        <span style="opacity:0.6;">☕ 享受每一刻</span>
+      </div>
+    </div>
+
+    <!-- ====== 右卡片：宠物信息 ====== -->
+    <div class="card pet-card" id="petCard">
+      <!-- 宠物编辑图标 -->
+      <img th:src="@{/images/change.png}" class="edit-icon" id="petEditIcon">
+      <!-- 宠物头像（点击上传） -->
+      <div class="avatar-container">
+        <img id="petAvatarImg" src="/images/noerool.png" class="avatar-img" onclick="document.getElementById('petAvatarInput').click()">
+        <input type="file" id="petAvatarInput" accept="image/*" style="display:none" onchange="uploadPetAvatar(event)">
+      </div>
+      <h1 id="petNameDisplay">我的宠物</h1>
+      <div class="info" id="petInfoDisplay">
+        <p><span class="label">🐾 名字</span> <span id="petNameSpan">未设置</span></p>
+        <p><span class="label">🎂 年龄</span> <span id="petAgeSpan">-</span></p>
+        <p><span class="label">🐕 品种</span> <span id="petBreedSpan">-</span></p>
+        <p><span class="label">🎯 兴趣</span> <span id="petHobbySpan">-</span></p>
+        <p><span class="label">🧠 性格</span> <span id="petPersonalitySpan">-</span></p>
+      </div>
+      <!-- 体力进度条 -->
+      <div class="energy-bar-container">
+        <label>⚡ 体力</label>
+        <div class="energy-bar-bg">
+          <div class="energy-bar-fill" id="energyFill" style="width:100%"></div>
+        </div>
+        <span id="energyText">100%</span>
+      </div>
+      <!-- 宠物编辑表单（默认隐藏） -->
+      <div id="petEditForm" style="display:none;">
+        <input type="text" id="editPetName" placeholder="名字">
+        <input type="number" id="editPetAge" placeholder="年龄（月/年）">
+        <input type="text" id="editPetBreed" placeholder="品种">
+        <input type="text" id="editPetHobby" placeholder="兴趣爱好">
+        <input type="text" id="editPetPersonality" placeholder="性格（如：温柔、活泼）">
+        <button onclick="savePetInfo()">保存宠物信息</button>
+        <button onclick="hidePetEdit()">取消</button>
+      </div>
+      <div class="footer" style="margin-top:10px;">
+        <span class="dot"></span> 陪伴是最长情的告白 <span class="dot"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 头像选择器弹出层 ===== -->
+<div id="avatarPicker" class="avatar-picker-overlay" style="display:none;" onclick="closeAvatarPickerOutside(event)">
+  <div class="avatar-picker-card" onclick="event.stopPropagation();">
+    <h3>选择你的头像</h3>
+    <div class="avatar-options">
+      <img src="/images/G1.png" onclick="selectAvatar('G1.png')">
+      <img src="/images/G2.png" onclick="selectAvatar('G2.png')">
+      <img src="/images/G3.png" onclick="selectAvatar('G3.png')">
+      <img src="/images/B1.png" onclick="selectAvatar('B1.png')">
+      <img src="/images/B2.png" onclick="selectAvatar('B2.png')">
+      <img src="/images/B3.png" onclick="selectAvatar('B3.png')">
+    </div>
+    <button class="btn-cancel" onclick="closeAvatarPicker()">取消</button>
+  </div>
+</div>
+
+<script th:src="@{/js/person/person.js}"></script>
+</body>
+</html>
