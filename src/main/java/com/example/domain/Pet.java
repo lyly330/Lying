@@ -148,7 +148,6 @@ public class Pet {
                         energy = 100;
                 }
         }
-
         @PreUpdate
         protected void onUpdate() {
                 updateTime = LocalDateTime.now();
