@@ -9,4 +9,6 @@ public interface UserService {
     User updateUser(Long id, String username, String password, String email, String tel);
     User save(User user);
     Long generateUniqueUserId();
+    Optional<User> findByEmail(String email);
+    Optional<User> findByTel(String tel);
 }

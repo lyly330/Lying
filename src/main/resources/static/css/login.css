@@ -150,3 +150,96 @@ body {
 #loginCard, #registerCard {
     transition: opacity 0.3s ease;
 }
+/* ===== 登录方式切换 ===== */
+/* ===== 登录方式切换 - 更短更扁，平分宽度 ===== */
+.login-method-toggle {
+    display: flex;
+    margin-bottom: 12px;          /* 与输入框的间距减小 */
+    border-radius: 30px;
+    overflow: hidden;
+    border: 1px solid #eddcc8;
+    background: #fffcf5;
+    height: 38px;                /* 更扁 */
+}
+
+.method-option {
+    flex: 1;                     /* 各占一半宽度 */
+    text-align: center;
+    line-height: 38px;           /* 垂直居中 */
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #b48b5a;
+    background: transparent;
+    user-select: none;
+}
+
+.method-option.active {
+    background: #dbb48b;
+    color: white;
+    box-shadow: none;
+}
+
+.method-option.inactive {
+    background: transparent;
+    color: #b48b5a;
+    opacity: 0.4;                /* 半透明效果 */
+}
+
+.method-option:hover:not(.active) {
+    opacity: 0.7;
+}
+
+.method-option.active {
+    background: #dbb48b;
+    color: white;
+    box-shadow: 0 2px 8px rgba(194, 154, 107, 0.3);
+}
+
+.method-option.inactive {
+    opacity: 0.4;
+    color: #b48b5a;
+}
+
+.method-option:hover:not(.active) {
+    opacity: 0.7;
+}
+
+/* ===== 底部链接 ===== */
+.login-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+    font-size: 14px;
+}
+
+.forgot-link {
+    color: #b48b5a;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.forgot-link:hover {
+    color: #8a6d4b;
+    text-decoration: underline;
+}
+
+.toggle-link {
+    color: #b48b5a;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.toggle-link:hover {
+    color: #8a6d4b;
+}
+/* ===== 切换选项中的图标 ===== */
+.method-icon {
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+    margin-right: 6px;
+    display: inline-block;
+}
