@@ -9,23 +9,41 @@
     <link th:href="@{/css/common/layout.css}" rel="stylesheet">
 </head>
 <body>
+
 <nav class="sidebar">
     <div class="sidebar-logo">
         <img th:src="@{/images/logo.png}" alt="小狗 Logo">
     </div>
-    <div class="sidebar-sticky">
-        <ul class="nav flex-column">
+
+    <!-- 使用 flex 列撑满高度，让底部元素自动下沉 -->
+    <div class="sidebar-sticky d-flex flex-column h-100">
+        <ul class="nav flex-column flex-grow-1">
+            <!-- 暖心聊天 -->
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/chat}" th:classappend="${currentPath == '/chat'} ? 'active'">
                     <i class="bi bi-chat-dots"></i> 暖心聊天
                 </a>
             </li>
+            <!-- 知识小屋 -->
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/document}" th:classappend="${currentPath == '/document'} ? 'active'">
                     <i class="bi bi-book"></i> 知识小屋
                 </a>
             </li>
+            <!-- 新增 HOME -->
             <li class="nav-item">
+                <a class="nav-link" th:href="@{/wehome}" th:classappend="${currentPath == '/wehome'} ? 'active'">
+                    <i class="bi bi-house"></i> HOME
+                </a>
+            </li>
+            <!-- 新增 角色集 -->
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/roles}" th:classappend="${currentPath == '/roles'} ? 'active'">
+                    <i class="bi bi-people"></i> 角色集
+                </a>
+            </li>
+            <!-- 个人中心固定在底部（使用 mt-auto 推到底部） -->
+            <li class="nav-item mt-auto">
                 <a class="nav-link" th:href="@{/person}" th:classappend="${currentPath == '/person'} ? 'active'">
                     <i class="bi bi-badge-ad"></i> 个人中心
                 </a>

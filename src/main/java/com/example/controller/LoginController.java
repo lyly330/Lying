@@ -75,8 +75,7 @@ public class LoginController {
 
         // 存入 Session
         session.setAttribute("loggedUser", user.getUsername());
-        session.setAttribute("userId", user.getUserId());
-
+        session.setAttribute("userId", user.getId());   // 存主键
         // 返回登录成功信息
         Map<String, Object> resp = new HashMap<>();
         resp.put("success", true);

@@ -4,23 +4,24 @@ body {
     color: #4a3b22;
 }
 
+/* ===== 侧边栏容器 ===== */
 .sidebar {
     position: fixed;
     top: 0;
     bottom: 0;
     left: 0;
     z-index: 100;
-    padding: 48px 0 0;
-    box-shadow: inset -1px 0 0 rgba(136, 101, 42, .14);
-    background-color: #f7d983;
     width: 240px;
+    background-color: #f7d983;
+    box-shadow: inset -1px 0 0 rgba(136, 101, 42, .14);
+    display: flex;
+    flex-direction: column;      /* 垂直排列子元素 */
+    overflow: hidden;
 }
 
+/* ===== Logo 区域（使用 flex 布局） ===== */
 .sidebar-logo {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+    flex-shrink: 0;              /* 不压缩 */
     height: 48px;
     padding: 6px;
     background-color: #f2c95f;
@@ -35,20 +36,29 @@ body {
     object-fit: contain;
 }
 
+/* ===== 菜单区域（自动填充剩余高度） ===== */
 .sidebar-sticky {
-    position: relative;
-    top: 0;
-    height: calc(100vh - 48px);
-    padding-top: .5rem;
-    overflow-x: hidden;
-    overflow-y: auto;
+    flex: 1;                     /* 占用剩余垂直空间 */
+    overflow-y: auto;            /* 菜单过多时可滚动 */
+    padding: 0.5rem 0;
+    display: flex;
+    flex-direction: column;
 }
 
+/* ===== 导航列表 ===== */
+.sidebar-sticky .nav {
+    display: flex;
+    flex-direction: column;
+    flex: 1;                     /* 占满父容器高度 */
+    padding: 0 0.6rem;
+}
+
+/* ===== 菜单项 ===== */
 .sidebar .nav-link {
     font-weight: 500;
     color: #5c4517;
     padding: 0.55rem 1rem;
-    margin: 0.2rem 0.6rem;
+    margin: 0.2rem 0;
     border-radius: 8px;
     transition: all 0.3s ease;
 }
@@ -68,12 +78,19 @@ body {
     margin-right: 0.5rem;
 }
 
+/* ===== 将个人中心推到底部 ===== */
+.mt-auto {
+    margin-top: auto !important;
+}
+
+/* ===== 主内容区域 ===== */
 .main-content {
     margin-left: 240px;
     padding: 20px;
     min-height: calc(100vh - 60px);
 }
 
+/* ===== 顶部标题栏 ===== */
 .header {
     position: fixed;
     top: 0;
@@ -111,6 +128,7 @@ body {
     margin-right: 0.5rem;
 }
 
+/* ===== 响应式 ===== */
 @media (max-width: 767.98px) {
     body {
         padding-top: 0;
@@ -119,21 +137,48 @@ body {
     .sidebar {
         position: static;
         height: auto;
-        padding-top: 0;
         width: 100%;
+        flex-direction: row;      /* 移动端改为水平排列，或保持列但高度自适应 */
+        flex-wrap: wrap;
+        padding: 0;
     }
 
     .sidebar-logo {
-        position: relative;
         height: 44px;
+        width: 100%;
+        flex-shrink: 0;
+    }
+
+    .sidebar-sticky {
+        flex: none;
+        width: 100%;
+        max-height: 300px;        /* 限制高度，可滚动 */
+        overflow-y: auto;
+    }
+
+    .sidebar-sticky .nav {
+        flex: none;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 0.5rem;
+    }
+
+    .sidebar .nav-link {
+        padding: 0.4rem 0.8rem;
+        margin: 0.1rem 0.3rem;
+        font-size: 0.9rem;
     }
 
     .main-content {
         margin-left: 0;
+        padding: 15px;
     }
 
     .header {
         left: 0;
         position: static;
+        height: auto;
+        padding: 0.8rem 1rem;
     }
 }

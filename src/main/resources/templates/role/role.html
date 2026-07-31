@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link th:href="@{/css/role/role.css}" rel="stylesheet">
+</head>
+<body>
+<div th:fragment="content">
+    <div class="role-page">
+        <!-- 各层区域由 JS 动态渲染：楼层式垂直分区 + 卡片网格 -->
+        <div id="roleLayers">
+            <div class="role-loading">正在加载角色集...</div>
+        </div>
+    </div>
+
+    <!-- 卡片编辑弹层 -->
+    <div class="role-modal-mask" id="roleModalMask" style="display: none;">
+        <div class="role-modal">
+            <h5 class="role-modal-title">编辑角色</h5>
+            <input type="hidden" id="editRoleId">
+            <div class="mb-3">
+                <label class="form-label">头像（图片地址或表情符号）</label>
+                <input type="text" class="form-control" id="editRoleAvatar" placeholder="例如 🐱 或 /images/cat.png">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">名称</label>
+                <input type="text" class="form-control" id="editRoleName" maxlength="20" placeholder="角色名称">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">描述</label>
+                <textarea class="form-control" id="editRoleDesc" rows="3" maxlength="200" placeholder="角色描述"></textarea>
+            </div>
+            <div class="role-modal-actions">
+                <button class="btn btn-outline-secondary" onclick="closeRoleModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveRoleEdit()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/role/role.js}"></script>
+</div>
+</body>
+</html>
