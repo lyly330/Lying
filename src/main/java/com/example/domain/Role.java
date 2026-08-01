@@ -36,6 +36,10 @@ public class Role {
     @Column(name = "affection_value")
     private Integer affectionValue = 0;
 
+    /** 好感度满后置位，前端据此永久不渲染进度条 */
+    @Column(name = "favor_bar_shattered")
+    private Boolean favorBarShattered = false;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -72,6 +76,9 @@ public class Role {
 
     public Integer getAffectionValue() { return affectionValue; }
     public void setAffectionValue(Integer affectionValue) { this.affectionValue = affectionValue; }
+
+    public Boolean getFavorBarShattered() { return favorBarShattered; }
+    public void setFavorBarShattered(Boolean favorBarShattered) { this.favorBarShattered = favorBarShattered; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

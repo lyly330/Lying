@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -40,16 +41,18 @@ public class RoleServiceImpl implements RoleService {
                     "locked TINYINT(1) DEFAULT 0, " +
                     "favor_max INT DEFAULT 50, " +
                     "affection_value INT DEFAULT 0, " +
+                    "favor_bar_shattered TINYINT(1) DEFAULT 0, " +
                     "created_at DATETIME DEFAULT CURRENT_TIMESTAMP, " +
                     "INDEX idx_role_user_layer (user_id, layer)" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
 
-            // 兼容旧表：缺 locked / favor_max / affection_value / parent_id 列则补上
+            // 兼容旧表：缺 locked / favor_max / affection_value / favor_bar_shattered / parent_id 列则补上
             String[][] cols = {
-                    {"locked",           "TINYINT(1) DEFAULT 0"},
-                    {"favor_max",        "INT DEFAULT 50"},
-                    {"affection_value",  "INT DEFAULT 0"},
-                    {"parent_id",        "BIGINT DEFAULT 0"}
+                    {"locked",              "TINYINT(1) DEFAULT 0"},
+                    {"favor_max",           "INT DEFAULT 50"},
+                    {"affection_value",     "INT DEFAULT 0"},
+                    {"favor_bar_shattered", "TINYINT(1) DEFAULT 0"},
+                    {"parent_id",           "BIGINT DEFAULT 0"}
             };
             for (String[] c : cols) {
                 Integer count = jdbcTemplate.queryForObject(
@@ -86,6 +89,19 @@ public class RoleServiceImpl implements RoleService {
                 // 旧 charset 下插入的 emoji 默认角色一定是失败的，清空后让 initDefaultRoles 重新写入
                 jdbcTemplate.execute("DELETE FROM role");
             }
+
+            // 数据迁移：二层及以上角色上限从旧值（20 或 50）统一升为 100
+            jdbcTemplate.execute("UPDATE role SET favor_max = 100 WHERE layer >= 2 AND favor_max <> 100");
+            // 兜底：即使历史代码错误地给 layer>=2 写入了 favor_max=50，也强制拉到 100
+            Integer wrongMax = jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) FROM role WHERE layer >= 2 AND favor_max < 100", Integer.class);
+            if (wrongMax != null && wrongMax > 0) {
+                jdbcTemplate.execute("UPDATE role SET favor_max = 100 WHERE layer >= 2 AND favor_max < 100");
+            }
+
+            // 数据迁移：历史中 affection_value >= favor_max 的卡片永久标记为 shattered
+            jdbcTemplate.execute("UPDATE role SET favor_bar_shattered = 1 " +
+                    "WHERE favor_bar_shattered = 0 AND affection_value >= favor_max");
 
             // 仅对未初始化的新用户：由 initDefaultRoles 在首次访问 /roles 时创建默认角色。
             // 启动时不再重置已有用户的 affection_value/locked，避免服务器重启抹掉好感度进度。
@@ -132,7 +148,7 @@ public class RoleServiceImpl implements RoleService {
         role.setParentId(0L);
         role.setOrderIndex(nextIndex);
         role.setLocked(true);         // 新增的卡片默认锁定，需要上一层好感度满才能解锁
-        role.setFavorMax(20);
+        role.setFavorMax(100);
         role.setAffectionValue(0);
         role.setCreatedAt(LocalDateTime.now());
         return roleRepository.save(role);
@@ -181,7 +197,10 @@ public class RoleServiceImpl implements RoleService {
         int max = role.getFavorMax() == null ? 50 : role.getFavorMax();
         int cur = role.getAffectionValue() == null ? 0 : role.getAffectionValue();
         if (cur < max) {
-            role.setAffectionValue(Math.min(cur + 5, max));
+            int updated = Math.min(cur + 5, max);
+            role.setAffectionValue(updated);
+            // 好感度打满后仅在前端展示“我和你最好了”弹跳文字，
+            // favorBarShattered 由 unlockNextRole 在用户实际点击解锁下一张时置位
         }
         return roleRepository.save(role);
     }
@@ -206,7 +225,7 @@ public class RoleServiceImpl implements RoleService {
         }
 
         List<Role> roles = roleRepository.findByUserIdAndLayerOrderByOrderIndex(userId, layer);
-        // 找到 target 前面 orderIndex 最接近的“已解锁”角色作为触发者
+        // 优先找 target 前面同层中 orderIndex 最接近的"已解锁"角色作为触发者
         Role prev = null;
         for (Role r : roles) {
             if (r.getId().equals(targetRoleId)) break;
@@ -214,6 +233,19 @@ public class RoleServiceImpl implements RoleService {
                 prev = r;
             }
         }
+
+        // 同层找不到触发者 → 允许跨层触发（layer >= 2 的首卡，从上一层最后一张 shattered 卡片触发）
+        if (prev == null && layer != null && layer >= 2) {
+            List<Role> prevLayer = roleRepository.findByUserIdAndLayerOrderByOrderIndex(userId, layer - 1);
+            for (int i = prevLayer.size() - 1; i >= 0; i--) {
+                Role p = prevLayer.get(i);
+                if (!Boolean.TRUE.equals(p.getLocked()) && Boolean.TRUE.equals(p.getFavorBarShattered())) {
+                    prev = p;
+                    break;
+                }
+            }
+        }
+
         if (prev == null) {
             throw new IllegalArgumentException("无可触发解锁的前置角色");
         }
@@ -225,9 +257,76 @@ public class RoleServiceImpl implements RoleService {
                     + ", targetId=" + target.getId());
             throw new IllegalArgumentException("好感度未满，暂不能解锁下一位角色");
         }
+        // 用户主动解锁下一张：把触发者（上一张卡）永久标记为 shattered，
+        // 前端据此不再渲染其进度条与“我和你最好了”弹跳文字
+        if (!Boolean.TRUE.equals(prev.getFavorBarShattered())) {
+            prev.setFavorBarShattered(true);
+            roleRepository.save(prev);
+        }
         target.setLocked(false);
         target.setAffectionValue(0);
         return roleRepository.save(target);
+    }
+
+    /**
+     * 调整指定层的角色卡片数量（1-10）：
+     * - 增加：按 orderIndex 追加默认锁定卡片
+     * - 减少：从 orderIndex 最大开始删除 locked=true 的卡片；已解锁的卡片不删
+     */
+    @Override
+    @Transactional
+    public List<Role> adjustLayerCount(Long userId, Integer layer, int targetCount) {
+        if (layer < 2) {
+            throw new IllegalArgumentException("第一层为系统固定角色，不能调整数量");
+        }
+        if (targetCount < 1) targetCount = 1;
+        if (targetCount > 10) targetCount = 10;
+
+        List<Role> roles = roleRepository.findByUserIdAndLayerOrderByOrderIndex(userId, layer);
+        int currentCount = roles.size();
+
+        if (targetCount > currentCount) {
+            // 增加：按顺序补默认卡片
+            int maxIndex = roles.stream()
+                    .mapToInt(r -> r.getOrderIndex() == null ? 0 : r.getOrderIndex())
+                    .max().orElse(-1);
+            for (int i = 0; i < targetCount - currentCount; i++) {
+                Role role = new Role();
+                role.setUserId(userId);
+                role.setName("新角色");
+                role.setDescription("点击卡片编辑角色信息");
+                role.setAvatar("🙂");
+                role.setLayer(layer);
+                role.setParentId(0L);
+                role.setOrderIndex(maxIndex + 1 + i);
+                role.setLocked(true);
+                role.setFavorMax(100);
+                role.setAffectionValue(0);
+                role.setCreatedAt(LocalDateTime.now());
+                roleRepository.save(role);
+            }
+        } else if (targetCount < currentCount) {
+            // 减少：从 orderIndex 最大开始删除，只删 locked=true 的卡片
+            int toRemove = currentCount - targetCount;
+            List<Role> sorted = new ArrayList<>(roles);
+            sorted.sort((a, b) -> {
+                int oa = a.getOrderIndex() == null ? 0 : a.getOrderIndex();
+                int ob = b.getOrderIndex() == null ? 0 : b.getOrderIndex();
+                return Integer.compare(ob, oa);
+            });
+            for (Role r : sorted) {
+                if (toRemove <= 0) break;
+                if (Boolean.TRUE.equals(r.getLocked())) {
+                    roleRepository.delete(r);
+                    toRemove--;
+                }
+            }
+            if (toRemove > 0) {
+                throw new IllegalArgumentException("仍有 " + toRemove + " 张已解锁卡片不能被删除，请先解锁更多角色或增加数量");
+            }
+        }
+
+        return roleRepository.findByUserIdAndLayerOrderByOrderIndex(userId, layer);
     }
 
     /**
@@ -272,14 +371,14 @@ public class RoleServiceImpl implements RoleService {
         if (secondLayer.isEmpty()) {
             Role human = new Role();
             human.setUserId(userId);
-            human.setName("人类/动物");
+            human.setName("新角色");
             human.setDescription("你的默认角色，点击卡片编辑");
             human.setAvatar("🙂");
             human.setLayer(2);
             human.setParentId(0L);
             human.setOrderIndex(0);
             human.setLocked(true);
-            human.setFavorMax(20);
+            human.setFavorMax(100);
             human.setAffectionValue(0);
             human.setCreatedAt(LocalDateTime.now());
             roleRepository.save(human);
@@ -292,7 +391,7 @@ public class RoleServiceImpl implements RoleService {
             lockedCard.setParentId(0L);
             lockedCard.setOrderIndex(1);
             lockedCard.setLocked(true);
-            lockedCard.setFavorMax(20);
+            lockedCard.setFavorMax(100);
             lockedCard.setAffectionValue(0);
             lockedCard.setCreatedAt(LocalDateTime.now());
             roleRepository.save(lockedCard);

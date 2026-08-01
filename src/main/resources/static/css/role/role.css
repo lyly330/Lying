@@ -34,6 +34,43 @@
     margin-bottom: 16px;
 }
 
+/* 二层及以上右上角操作区：数量调节器 + 添加按钮 */
+.role-layer-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.role-count-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #666;
+}
+
+.role-count-input {
+    width: 64px;
+    padding: 4px 8px;
+    border: 1px solid #d6dce4;
+    border-radius: 6px;
+    font-size: 13px;
+    text-align: center;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.role-count-input:focus {
+    border-color: #54a0ff;
+    box-shadow: 0 0 0 2px rgba(84, 160, 255, 0.15);
+}
+
+.role-count-input:disabled {
+    background: #f1f3f5;
+    cursor: not-allowed;
+}
+
 .role-layer-title {
     font-size: 17px;
     font-weight: 600;
@@ -119,6 +156,45 @@
     opacity: 1;
 }
 
+/* ---------- 卡片破碎动效（在进度条破碎结束后触发） ---------- */
+.role-card[data-card-shatter="1"] {
+    animation: cardShatter 0.8s cubic-bezier(0.55, 0.085, 0.68, 0.19) forwards;
+    pointer-events: none;
+}
+
+.role-card[data-card-shatter="1"]:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+@keyframes cardShatter {
+    0% {
+        opacity: 1;
+        transform: translateX(0) translateY(0) scale(1) rotate(0deg);
+        filter: grayscale(0) blur(0);
+    }
+    15% {
+        opacity: 1;
+        transform: translateX(-4px) scale(1.04) rotate(-2deg);
+        filter: grayscale(0) blur(0);
+    }
+    35% {
+        opacity: 0.95;
+        transform: translateX(3px) scale(1.06) rotate(2deg);
+        filter: grayscale(15%) blur(0.3px);
+    }
+    65% {
+        opacity: 0.55;
+        transform: translateX(8px) scale(0.85) rotate(5deg);
+        filter: grayscale(50%) blur(1px);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(20px) translateY(-10px) scale(0.55) rotate(12deg);
+        filter: grayscale(100%) blur(2px);
+    }
+}
+
 .role-card-avatar {
     width: 64px;
     height: 64px;
@@ -180,11 +256,105 @@
     width: 0%;
 }
 
+/* ---------- 进度条破碎动画（好感度满时触发） ---------- */
+.role-favor-bar.shattered {
+    --shard-count: 8;
+}
+
+.role-favor-bar.shattered .role-favor-fill {
+    background: repeating-linear-gradient(
+        90deg,
+        #ff6b6b 0,
+        #ff9f43 12%,
+        #ff6b6b 24%
+    );
+    animation:
+        favorShake   0.35s ease-in-out,
+        favorShatter 0.85s ease-in 0.35s forwards;
+}
+
+.role-favor-bar.shattered .role-favor-text {
+    animation: favorTextFade 0.6s ease-in 0.5s forwards;
+}
+
+@keyframes favorShake {
+    0%, 100% { transform: translateX(0); }
+    20%      { transform: translateX(-3px); }
+    40%      { transform: translateX(3px); }
+    60%      { transform: translateX(-2px); }
+    80%      { transform: translateX(2px); }
+}
+
+@keyframes favorShatter {
+    0% {
+        opacity: 1;
+        transform: translateX(0) scaleY(1);
+        clip-path: inset(0 0 0 0);
+    }
+    30% {
+        opacity: 0.85;
+        transform: translateX(0) scaleY(1.3);
+        clip-path: inset(0 5% 0 5%);
+    }
+    70% {
+        opacity: 0.35;
+        transform: translateX(6px) scaleY(0.4);
+        clip-path: inset(0 40% 0 40%);
+        filter: blur(1px);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(14px) scaleY(0) rotate(8deg);
+        clip-path: inset(0 50% 0 50%);
+        filter: blur(2px);
+    }
+}
+
+@keyframes favorTextFade {
+    0%   { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(4px); }
+}
+
 .role-favor-text {
     font-size: 11px;
     color: #999;
     margin-top: 4px;
     text-align: right;
+}
+
+/* ---------- 好感度满时“我和你最好了”弹跳文字 ---------- */
+.role-card-favor-best {
+    text-align: center;
+    padding: 6px 0;
+}
+
+.role-favor-best-tip {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #ff6b9d;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 2px rgba(255, 107, 157, 0.25);
+    transform-origin: center center;
+    animation: favorBestBounce 1.6s ease-in-out infinite;
+}
+
+@keyframes favorBestBounce {
+    0%, 100% {
+        transform: scale(1) translateY(0);
+    }
+    15% {
+        transform: scale(1.25) translateY(-2px);
+    }
+    30% {
+        transform: scale(0.95) translateY(0);
+    }
+    45% {
+        transform: scale(1.12) translateY(-1px);
+    }
+    60% {
+        transform: scale(1) translateY(0);
+    }
 }
 
 /* ---------- 测试用 +5 按钮 ---------- */
@@ -297,4 +467,45 @@
     justify-content: flex-end;
     gap: 10px;
     margin-top: 8px;
+}
+
+/* ---------- 头像行：输入框 + 上传图标 ---------- */
+.role-avatar-row {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+}
+
+.role-avatar-input {
+    flex: 1;
+}
+
+.role-avatar-upload-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    min-width: 42px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    background: #fff;
+    color: #495057;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+    padding: 0;
+}
+
+.role-avatar-upload-btn:hover {
+    background: #f1f3f5;
+    border-color: #868e96;
+    color: #228be6;
+}
+
+.role-avatar-upload-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.role-avatar-upload-btn svg {
+    pointer-events: none;
 }

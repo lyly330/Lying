@@ -23,6 +23,13 @@ public interface RoleService {
     /** 解锁指定层中“下一个”锁定角色（由好感度满的卡片触发） */
     Role unlockNextRole(Long userId, Integer layer, Long prevRoleId);
 
+    /**
+     * 调整指定层的角色卡片数量（1-10）：
+     * - 增加：按 orderIndex 追加默认卡片（锁定态、好感度 0）
+     * - 减少：按 orderIndex 从大到小删除 locked=true 的卡片，已解锁的卡片不会被删
+     */
+    List<Role> adjustLayerCount(Long userId, Integer layer, int targetCount);
+
     void initDefaultRoles(Long userId);
 
 }

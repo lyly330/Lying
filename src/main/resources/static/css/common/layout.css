@@ -83,6 +83,65 @@ body {
     margin-top: auto !important;
 }
 
+/* ===== 目录收起/展开 切换按钮（window.png 图标） ===== */
+.sidebar-toggle {
+    position: fixed;
+    top: 10px;
+    left: 202px;            /* 展开时位于侧边栏右上角（绿色方框处） */
+    z-index: 101;
+    width: 30px;
+    height: 30px;
+    padding: 3px;
+    border: none;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.25);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: left 0.3s ease, background-color 0.2s ease;
+}
+
+.sidebar-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.55);
+}
+
+.sidebar-toggle img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+}
+
+/* ===== 目录收起状态 ===== */
+body.sidebar-collapsed .sidebar {
+    transform: translateX(-100%);          /* 向左滑出，移出页面 */
+}
+
+body.sidebar-collapsed .sidebar-toggle {
+    left: 10px;                            /* 收起后停靠到页面左上角 */
+    background-color: #f7d983;
+    box-shadow: 0 2px 6px rgba(136, 101, 42, .25);
+}
+
+body.sidebar-collapsed .header {
+    left: 0;
+    padding-left: 50px;                    /* 给切换按钮留出位置 */
+}
+
+body.sidebar-collapsed .main-content {
+    margin-left: 0;
+}
+
+/* 左右滑动动画 */
+.sidebar {
+    transition: transform 0.3s ease;
+}
+
+.header,
+.main-content {
+    transition: left 0.3s ease, margin-left 0.3s ease, padding-left 0.3s ease;
+}
+
 /* ===== 主内容区域 ===== */
 .main-content {
     margin-left: 240px;
@@ -141,6 +200,11 @@ body {
         flex-direction: row;      /* 移动端改为水平排列，或保持列但高度自适应 */
         flex-wrap: wrap;
         padding: 0;
+    }
+
+    /* 移动端布局不同，隐藏收起/展开按钮 */
+    .sidebar-toggle {
+        display: none;
     }
 
     .sidebar-logo {

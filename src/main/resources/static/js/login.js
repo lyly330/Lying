@@ -32,7 +32,7 @@ async function handleLogin(event) {
         if (response.ok) {
             const data = await response.json();
             localStorage.setItem('userInfo', JSON.stringify(data));
-            window.location.href = '/chat';
+            window.location.href = '/wehome';
             return false;
         }
 
