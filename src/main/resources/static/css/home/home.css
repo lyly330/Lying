@@ -1,0 +1,192 @@
+/* ===== 房子页面 ===== */
+.house-page {
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: none;
+    position: relative;
+}
+
+/* ===== 舞台 ===== */
+.stage {
+    width: 100%;
+    height: auto;
+    position: relative;
+    overflow: hidden;
+    background: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* ===== 世界容器 ===== */
+.world {
+    position: relative;
+    width: 100%;
+    height: auto;
+}
+
+/* 所有图片统一：以宽度为准，高度自适应，完整显示 */
+.world img.layer {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* 总览模式：只显示 house，隐藏所有补丁 */
+.world.view-overview .house { display: block; }
+.world.view-overview .patch { display: none; }
+
+/* 楼层模式：隐藏 house */
+.world.view-floor1 .house,
+.world.view-floor2 .house,
+.world.view-floor3 .house {
+    display: none;
+}
+
+/* 一层模式：只显示一层补丁 */
+.world.view-floor1 #patch-floor1 { display: block; }
+.world.view-floor1 #patch-floor2 { display: none; }
+.world.view-floor1 #patch-floor3 { display: none; }
+
+/* 二层模式：只显示二层补丁 */
+.world.view-floor2 #patch-floor1 { display: none; }
+.world.view-floor2 #patch-floor2 { display: block; }
+.world.view-floor2 #patch-floor3 { display: none; }
+
+/* 三层模式：只显示三层补丁 */
+.world.view-floor3 #patch-floor1 { display: none; }
+.world.view-floor3 #patch-floor2 { display: none; }
+.world.view-floor3 #patch-floor3 { display: block; }
+
+/* 默认补丁隐藏 */
+.patch { display: none; }
+
+/* ===== 角色 ===== */
+.character {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    z-index: 10;
+    transition: filter 0.3s;
+}
+
+.char-body {
+    width: 100%;
+    height: 100%;
+    font-size: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s;
+}
+
+.character.happy .char-body {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 8px gold);
+}
+.character.angry {
+    filter: hue-rotate(-30deg) saturate(2);
+    animation: shake 0.5s infinite;
+}
+.character.hungry {
+    filter: grayscale(0.6) brightness(0.8);
+    transform: scale(0.9);
+}
+
+.mood-bubble {
+    position: absolute;
+    top: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.character:hover .mood-bubble,
+.character.show-mood .mood-bubble {
+    opacity: 1;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    75% { transform: translateX(3px); }
+}
+
+/* ===== 日夜系统 ===== */
+.daynight-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 15, 40, 0);
+    pointer-events: none;
+    transition: background 1s;
+    z-index: 5;
+}
+
+.stage.night .daynight-overlay {
+    background: rgba(10, 15, 40, 0.55);
+}
+.stage.night .world {
+    filter: brightness(0.65) contrast(1.1);
+}
+
+/* ===== UI 控制栏 ===== */
+.ui-panel {
+    margin: 15px 0;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    z-index: 100;
+    position: relative;
+}
+
+.btn {
+    padding: 8px 18px;
+    border: none;
+    border-radius: 20px;
+    background: #fff;
+    color: #5D4037;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    font-family: 'Microsoft YaHei', sans-serif;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    background: #FFF8E1;
+}
+.btn:active {
+    transform: translateY(0);
+}
+.btn-toggle {
+    background: #5D4037;
+    color: white;
+}
+
+.status-bar {
+    margin-bottom: 20px;
+    text-align: center;
+    color: #5D4037;
+    font-size: 13px;
+    opacity: 0.8;
+    position: relative;
+    z-index: 100;
+}

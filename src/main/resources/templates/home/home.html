@@ -1,6 +1,52 @@
 <!DOCTYPE html>
-<!-- home/home.html -->
-<div class="home-container">
-  <h2>🏠 欢迎来到 HOME</h2>
-  <p>这里是你的仪表板或首页。</p>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+  <div th:fragment="content" class="house-page">
+  <!-- 房子舞台 -->
+    <div id="stage" class="stage">
+      <div id="world" class="world view-overview">
+
+      <!-- 总览图 -->
+      <img class="layer house" th:src="@{/images/house.webp}" alt="总览">
+
+      <!-- 高清补丁层 -->
+      <img class="layer patch" id="patch-floor1" th:src="@{/images/floor1.webp}" alt="一层">
+      <img class="layer patch" id="patch-floor2" th:src="@{/images/floor2.webp}" alt="二层">
+      <img class="layer patch" id="patch-floor3" th:src="@{/images/floor3.webp}" alt="三层">
+
+      <!-- 角色 -->
+        <div class="character" id="char-cat" data-floor="1">
+          <div class="char-body">🐱</div>
+          <div class="mood-bubble">😊 开心</div>
+        </div>
+
+        <div class="character" id="char-dog" data-floor="2">
+          <div class="char-body">🐶</div>
+          <div class="mood-bubble">😊 开心</div>
+        </div>
+
+      </div>
+
+      <!-- 日夜遮罩 -->
+        <div id="daynight-overlay" class="daynight-overlay"></div>
+      </div>
+
+  <!-- 控制栏 -->
+    <div class="ui-panel">
+      <button class="btn" onclick="viewOverview()">🏠 总览</button>
+      <button class="btn" onclick="viewFloor(1)">1️⃣ 一层</button>
+      <button class="btn" onclick="viewFloor(2)">2️⃣ 二层</button>
+      <button class="btn" onclick="viewFloor(3)">3️⃣ 三层</button>
+      <button class="btn btn-toggle" onclick="toggleDayNight()" id="btn-daynight">🌙 切换夜晚</button>
+    </div>
+
+    <div class="status-bar" id="status-bar">当前：总览模式 | 白天</div>
+  </div>
+  <!-- 引入房子专用的 CSS 和 JS -->
+  <link rel="stylesheet" th:href="@{/css/home/home.css}">
+  <script th:src="@{/js/home/home.js}"></script>
+
 </div>
+</body>
+</html>
